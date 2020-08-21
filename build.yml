@@ -1,0 +1,33 @@
+parameters:
+- name: buildConfiguration
+  type: string
+  default: 'Release'
+- name: project
+  type: string
+  default: ''
+- name: artifactName
+  type: string
+  default: ''
+
+steps:
+  - task: DotNetCoreCLI@2
+    displayName: 'Build'
+    inputs:
+      command: 'build'
+      projects: '**/${{ parameters.project }}'
+      arguments: '--configuration ${{ parameters.buildConfiguration }}' 
+  
+  - task: DotNetCoreCLI@2
+    displayName: 'Publish Application'
+    inputs:
+      command: 'publish'
+      publishWebProjects: false
+      projects: '**/${{ parameters.project }}'
+      arguments: '--configuration ${{ parameters.buildConfiguration }} --output $(Build.ArtifactStagingDirectory)'
+
+  - task: PublishPipelineArtifact@1
+    displayName: 'Publish Artifacts'
+    inputs:
+      targetPath: '$(Build.ArtifactStagingDirectory)'
+      artifact: ${{ parameters.artifactName }}
+      publishLocation: 'Container'
