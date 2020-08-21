@@ -3,57 +3,32 @@
 # Add steps that run tests, create a NuGet package, deploy, and more:
 # https://docs.microsoft.com/azure/devops/pipelines/languages/dotnet-core
 
-trigger:
-- master
+trigger: none
 
 variables:
   buildConfiguration: 'Release'
 
 jobs:
 - job: WebApp1
+  displayName: 'Build WebApp1'
   pool:
     vmImage: 'ubuntu-latest'
 
   steps:
-  - task: DotNetCoreCLI@2
-    inputs:
-      command: 'build'
-      projects: '**/WebApp1.csproj'
-      arguments: '--configuration $(buildConfiguration)'
-
-  - task: DotNetCoreCLI@2
-    inputs:
-      command: 'publish'
-      publishWebProjects: false
-      projects: '**/WebApp1.csproj'
-      arguments: '--configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory)'
-
-  - task: PublishBuildArtifacts@1
-    inputs:
-      PathtoPublish: '$(Build.ArtifactStagingDirectory)'
-      ArtifactName: 'drop/WebApp1'
-      publishLocation: 'Container'
+  - template: build.yml
+    parameters:
+      buildConfiguration: $(buildConfiguration)
+      project: WebApp1.csproj
+      artifactName: WebApp1
 
 - job: WebApp2
+  displayName: 'Build WebApp2'
   pool:
     vmImage: 'ubuntu-latest'
 
   steps:
-  - task: DotNetCoreCLI@2
-    inputs:
-      command: 'build'
-      projects: '**/WebApp2.csproj'
-      arguments: '--configuration $(buildConfiguration)'
-
-  - task: DotNetCoreCLI@2
-    inputs:
-      command: 'publish'
-      publishWebProjects: false
-      projects: '**/WebApp2.csproj'
-      arguments: '--configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory)'
-
-  - task: PublishBuildArtifacts@1
-    inputs:
-      PathtoPublish: '$(Build.ArtifactStagingDirectory)'
-      ArtifactName: 'drop/WebApp2'
-      publishLocation: 'Container'
+  - template: build.yml
+    parameters:
+      buildConfiguration: $(buildConfiguration)
+      project: WebApp2.csproj
+      artifactName: WebApp2
