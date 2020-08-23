@@ -3,13 +3,13 @@
 # Add steps that run tests, create a NuGet package, deploy, and more:
 # https://docs.microsoft.com/azure/devops/pipelines/languages/dotnet-core
 
+name: $(SourceBranchName)_$(date:yyyyMMdd)$(rev:.r)
 resources:      
   repositories: 
   - repository: Shared
     name: Playground/Shared
     type: git 
     ref: master #branch name
-
 trigger: none
 
 variables:
