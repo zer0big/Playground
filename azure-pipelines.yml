@@ -3,39 +3,56 @@
 # Add steps that run tests, create a NuGet package, deploy, and more:
 # https://docs.microsoft.com/azure/devops/pipelines/languages/dotnet-core
 
-resources:     
-  repositories:
+resources:      
+  repositories: 
   - repository: Shared
     name: Playground/Shared
-    type: git
+    type: git 
     ref: master #branch name
- 
+
 trigger: none
- 
+
 variables:
   buildConfiguration: 'Release'
- 
+
 jobs:
 - job: WebApp1
   displayName: 'Build WebApp1'
   pool:
     vmImage: 'ubuntu-latest'
- 
+
   steps:
   - template: buildCoreWebProject.yml@Shared
     parameters:
       buildConFiguration: $(buildConfiguration)
       project: WebApp1.csproj
       artifactName: WebApp1
- 
+
 - job: WebApp2
   displayName: 'Build WebApp2'
+  condition: and(succeeded(), eq(variables['BuildWebApp2'], 'true'))
   pool:
     vmImage: 'ubuntu-latest'
- 
+
   steps:
-  - template: build.yml
-    parameters:
+   - template: buildCoreWebProject.yml@Shared
+     parameters:
       buildConFiguration: $(buildConfiguration)
       project: WebApp2.csproj
       artifactName: WebApp2
+      
+- job: DependentJob
+  displayName: 'Build Dependent Job'
+  pool:
+    vmImage: 'ubuntu-latest'
+
+  dependsOn:
+  - WebApp1
+  - WebApp2
+
+  steps:
+  - template: buildCoreWebProject.yml@Shared
+    parameters:
+      buildConFiguration: $(buildConfiguration)
+      project: WebApp1.csproj
+      artifactName: WebApp1Again
