@@ -34,4 +34,4 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         name: WebApp2
-        path: /home/runner/work/Playground/Playground/src/WebApp2/bin/Debug/netcoreapp
+        path: /home/runner/work/Playground/Playground/src/WebApp2/bin/Debug/netcoreapp3.1/publish/
